@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { IExpense } from './expense.model';
+import { JsonPipe } from '@angular/common';
 
 
 export class ExpenseService {
@@ -35,11 +36,27 @@ export class ExpenseService {
     //     }
     // ];
     
-    expenses: Array<IExpense> = [];
+    //expenses: Array<IExpense> = [];
+
+    expenses = this.loadExpenses();
+
+   private loadExpenses(): Array<IExpense> {
+        const expenses = localStorage.getItem('expenses');
+        if(expenses) {
+            return JSON.parse(expenses);
+        } else {
+            return [];
+        }
+    }
+
+    private storeExpenses() {
+        localStorage.setItem('expences', JSON.stringify(this.expenses));
+    }
 
     public addExpense(expense: IExpense) {
         expense.id = uuid();
         this.expenses.push(expense);
+        this.storeExpenses()
     }
 
     public getExpense(expenseId: string): IExpense {
@@ -50,10 +67,12 @@ export class ExpenseService {
     public updateExpense(expense: IExpense) {
         const index =  this.expenses.findIndex(it => it.id === expense.id);
         this.expenses[index] = expense;
+        this.storeExpenses();
     }
 
     public removeExpense(expenseId: string) {
         const index =  this.expenses.findIndex(it => it.id === expenseId);
         this.expenses.splice(index, 1);
+        this.storeExpenses();
     }
 }
