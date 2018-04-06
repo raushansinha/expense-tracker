@@ -19,15 +19,16 @@ export class DetailPage {
     private alertCtrl: AlertController) {
     this.categories = expenseService.categories;
     const expenseId = navParams.get('expenseId');
+    this.expense = {
+      date: '',
+      amount: 0,
+      category: '',
+      description: ''
+    };
+
     if (expenseId) {
-      this.expense = expenseService.getExpense(expenseId);
-    } else {
-      this.expense = {
-        date: '',
-        amount: 0,
-        category: '',
-        description: ''
-      };
+      expenseService.getExpense(expenseId)
+        .then(expense => this.expense = expense);
     }
   }
 
